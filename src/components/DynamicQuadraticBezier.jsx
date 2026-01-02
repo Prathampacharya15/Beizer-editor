@@ -409,6 +409,7 @@ const handleAICreateCurve = async (prompt) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ prompt }),
     });
+    // const data = await window.ai.generateCurve(prompt);
 
     const data = await res.json();
 
