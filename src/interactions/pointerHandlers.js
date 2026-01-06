@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { updateHandleLine } from "../three/handleLines";
 
 export const attachPointerHandlers = ({
   rendererRef,
@@ -208,6 +209,13 @@ export const attachPointerHandlers = ({
       cp.pos.copy(p);
       if (cp.sphere) cp.sphere.position.copy(p);
     }
+    controlPointsRef.current.forEach((seg, i) => {
+  const A = anchorPointsRef.current[i];
+  const B = anchorPointsRef.current[i + 1];
+
+  if (seg.line1) updateHandleLine(seg.line1, A, seg.cp1.pos);
+  if (seg.line2) updateHandleLine(seg.line2, B, seg.cp2.pos);
+});
 
     // LIVE REBUILD TUBE + MESH POSITION UPDATE
     rebuildTube(activeWidthRef.current, activeColorRef.current);

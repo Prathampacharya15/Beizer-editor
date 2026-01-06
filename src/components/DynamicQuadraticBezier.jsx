@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 import { generateCurveFromPrompt } from "../ai/gemini";
 import AIChatBox from "./AIChatBox";
+import { createHandleLine, updateHandleLine } from "../three/handleLines";
 
 
 import ControlPanel from "./ControlPanel";
@@ -124,6 +125,26 @@ export default function DynamicCubicBezier() {
     seg.cp2.sphere.position.copy(seg.cp2.pos);
   }
 });
+
+controlPointsRef.current.forEach((seg, i) => {
+  const A = anchorPointsRef.current[i];
+  const B = anchorPointsRef.current[i + 1];
+
+  if (!seg.line1) {
+    seg.line1 = createHandleLine(A, seg.cp1.pos);
+    sceneRef.current.add(seg.line1);
+  } else {
+    updateHandleLine(seg.line1, A, seg.cp1.pos);
+  }
+
+  if (!seg.line2) {
+    seg.line2 = createHandleLine(B, seg.cp2.pos);
+    sceneRef.current.add(seg.line2);
+  } else {
+    updateHandleLine(seg.line2, B, seg.cp2.pos);
+  }
+});
+
 
   };
 
@@ -349,6 +370,19 @@ export default function DynamicCubicBezier() {
     anchorMeshesRef.current = [];
     anchorPointsRef.current = [];
 
+    controlPointsRef.current.forEach(seg => {
+  if (seg.line1) {
+    scene.remove(seg.line1);
+    seg.line1.geometry.dispose();
+    seg.line1.material.dispose();
+  }
+  if (seg.line2) {
+    scene.remove(seg.line2);
+    seg.line2.geometry.dispose();
+    seg.line2.material.dispose();
+  }
+});
+
     // remove controls
     controlPointsRef.current.forEach((seg) => {
       try {
@@ -404,14 +438,14 @@ export default function DynamicCubicBezier() {
 
 const handleAICreateCurve = async (prompt) => {
   try {
-    const res = await fetch("http://localhost:5000/api/generate-curve", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ prompt }),
-    });
-    // const data = await window.ai.generateCurve(prompt);
+    // const res = await fetch("http://localhost:5000/api/generate-curve", {
+    //   method: "POST",
+    //   headers: { "Content-Type": "application/json" },
+    //   body: JSON.stringify({ prompt }),
+    // });
+    const data = await window.ai.generateCurve(prompt);
 
-    const data = await res.json();
+    // const data = await res.json();
 
     if (!data.anchors || !data.controls) {
       throw new Error("Invalid AI response");
