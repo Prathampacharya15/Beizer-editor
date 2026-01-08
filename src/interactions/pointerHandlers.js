@@ -20,6 +20,7 @@ export const attachPointerHandlers = ({
   activeColorRef,
   sceneRef,
   setSelectedAnchorPos,
+  mirrorHandlesRef
 }) => {
   // ------------------------------
   // GET WORLD POSITION UNDER CURSOR
@@ -214,13 +215,35 @@ export const attachPointerHandlers = ({
     // DRAGGING CONTROL POINT (cp1 / cp2)
     // ----------------------------------------
     if (d.type === "control") {
-      const seg = controlPointsRef.current[d.segment];
-      if (!seg) return;
+  const seg = controlPointsRef.current[d.segment];
+  if (!seg) return;
 
-      const cp = seg[d.which];
-      cp.pos.copy(p);
-      if (cp.sphere) cp.sphere.position.copy(p);
+  const { cp1, cp2 } = seg;
+  const A = anchorPointsRef.current[d.segment];
+  const B = anchorPointsRef.current[d.segment + 1];
+
+  // Move selected control
+  seg[d.which].pos.copy(p);
+  seg[d.which].manual = true;
+
+  // 🔁 OPTIONAL MIRROR MODE
+  if (mirrorHandlesRef.current) {
+    if (d.which === "cp1") {
+      const v = new THREE.Vector3().subVectors(p, A);
+      cp2.pos.copy(B.clone().sub(v));
     }
+
+    if (d.which === "cp2") {
+      const v = new THREE.Vector3().subVectors(p, B);
+      cp1.pos.copy(A.clone().sub(v));
+    }
+  }
+
+  // Update visuals
+  cp1.sphere?.position.copy(cp1.pos);
+  cp2.sphere?.position.copy(cp2.pos);
+}
+
     controlPointsRef.current.forEach((seg, i) => {
   const A = anchorPointsRef.current[i];
   const B = anchorPointsRef.current[i + 1];

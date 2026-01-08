@@ -23,6 +23,8 @@ export default function ControlPanel({
   onAICreateCurve,
   selectedAnchorPos,
   onAnchorPositionChange,
+  mirrorHandles,
+  setMirrorHandles,
 
 }) {
   return (
@@ -286,6 +288,28 @@ export default function ControlPanel({
 )}
 
  
+
+<button
+  onClick={() => setMirrorHandles(prev => !prev)}
+  style={{
+    padding: "8px 14px",
+    borderRadius: 12,
+    border: "none",
+    background: mirrorHandles ? "#00c853" : "#2a2a2a",
+    color: "white",
+    fontWeight: 600,
+    cursor: "pointer",
+    display: "flex",
+    alignItems: "center",
+    gap: 6,
+    transition: "background 0.2s ease",
+  }}
+>
+  🔁 Mirror Handles
+  <span style={{ opacity: 0.8 }}>
+    {mirrorHandles ? "ON" : "OFF"}
+  </span>
+</button>
 
 
 

@@ -24,6 +24,7 @@ import { attachKeyboardHandlers } from "../interactions/keyboardHandlers";
 
 export default function DynamicCubicBezier() {
   const mountRef = useRef(null);
+  const mirrorHandlesRef = useRef(false);
 
   // UI state
   const [isFreehand, setIsFreehand] = useState(false);
@@ -35,7 +36,7 @@ export default function DynamicCubicBezier() {
   const [animType, setAnimType] = useState("disappear-start-to-end");
   const [timeLine, setTimeLine] = useState(3);
   const [selectedAnchorPos, setSelectedAnchorPos] = useState(null);
-
+  const [mirrorHandles,setMirrorHandles] = useState(false)
 
   // Three.js refs
   const sceneRef = useRef(null);
@@ -198,6 +199,8 @@ controlPointsRef.current.forEach((seg, i) => {
       isFreehandRef,
       anchorPointsRef,
       setSelectedAnchorPos,
+      mirrorHandlesRef,
+
 
       computeControlPoints: (update) =>
         computeControlPoints(anchorPointsRef, controlPointsRef, sceneRef, update),
@@ -310,6 +313,11 @@ controlPointsRef.current.forEach((seg, i) => {
     isFreehandRef.current = isFreehand;
   }, [isFreehand]);
 
+
+  useEffect(() => {
+  mirrorHandlesRef.current = mirrorHandles;
+  console.log("ON");
+}, [mirrorHandles]);
   // ---------- UI helpers ----------
   const startDrawing = () => {
     setIsDrawing(true);
@@ -568,6 +576,8 @@ const handleAICreateCurve = async (prompt) => {
         onAICreateCurve={handleAICreateCurve}
        selectedAnchorPos={selectedAnchorPos} 
        onAnchorPositionChange={updateSelectedAnchorPosition}
+       mirrorHandles={mirrorHandles}
+      setMirrorHandles={setMirrorHandles}
 
         
       />
