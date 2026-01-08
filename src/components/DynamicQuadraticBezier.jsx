@@ -493,6 +493,31 @@ const handleAICreateCurve = async (prompt) => {
   }
 };
 
+  const updateSelectedAnchorPosition = (axis, value) => {
+  if (!selectedRef.current) return;
+  if (selectedRef.current.type !== "anchor") return;
+
+  const index = selectedRef.current.index;
+  const p = anchorPointsRef.current[index];
+
+  if (!p) return;
+
+  // Update axis
+  if (axis === "x") p.x = value;
+  if (axis === "y") p.y = value;
+  if (axis === "z") p.z = value;
+
+  // Recompute curve
+  computeControlPoints(anchorPointsRef, controlPointsRef, sceneRef, true);
+  redrawAll(activeWidthRef.current, activeColorRef.current);
+
+  // Update UI state
+  setSelectedAnchorPos({
+    x: p.x,
+    y: p.y,
+    z: p.z,
+  });
+};
 
 
   const applyAICreateCurve = (aiResult) => {
@@ -542,6 +567,7 @@ const handleAICreateCurve = async (prompt) => {
         setIsFreehand={setIsFreehand}
         onAICreateCurve={handleAICreateCurve}
        selectedAnchorPos={selectedAnchorPos} 
+       onAnchorPositionChange={updateSelectedAnchorPosition}
 
         
       />

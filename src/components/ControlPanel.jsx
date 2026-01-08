@@ -21,7 +21,8 @@ export default function ControlPanel({
   isFreehand,
   setIsFreehand,
   onAICreateCurve,
-  selectedAnchorPos
+  selectedAnchorPos,
+  onAnchorPositionChange,
 
 }) {
   return (
@@ -238,23 +239,52 @@ export default function ControlPanel({
     🗑 Delete Selected
   </button>
 
-<div>
-  <label >Select the points to get the position</label>
-   {selectedAnchorPos && (
-  <div style={{
-    marginTop: 10,
-    padding: 8,
-    background: "#111",
-    borderRadius: 6,
-    fontSize: 12,
-  }}>
-    <div style={{ fontWeight: 600 }}>Selected Anchor</div>
-    <div>X: {selectedAnchorPos.x.toFixed(2)}</div>
-    <div>Y: {selectedAnchorPos.y.toFixed(2)}</div>
-    <div>Z: {selectedAnchorPos.z.toFixed(2)}</div>
+{selectedAnchorPos && (
+  <div
+    style={{
+      marginTop: 12,
+      padding: 10,
+      background: "#111",
+      borderRadius: 8,
+      border: "1px solid #333",
+    }}
+  >
+    <div style={{ fontWeight: 600, marginBottom: 6 }}>
+      Selected Anchor Position
+    </div>
+
+    {["x", "y"].map((axis) => (
+      <div
+        key={axis}
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 6,
+          marginBottom: 6,
+        }}
+      >
+        <span style={{ width: 16 }}>{axis.toUpperCase()}</span>
+        <input
+          type="number"
+          step="0.1"
+          value={selectedAnchorPos[axis]}
+          onChange={(e) =>
+            onAnchorPositionChange(axis, parseFloat(e.target.value))
+          }
+          style={{
+            flex: 1,
+            background: "#000",
+            color: "white",
+            border: "1px solid #444",
+            borderRadius: 6,
+            padding: "4px 6px",
+          }}
+        />
+      </div>
+    ))}
   </div>
 )}
-</div>
+
  
 
 
