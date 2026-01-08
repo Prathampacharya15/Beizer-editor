@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { generateCurveFromPrompt } from "../ai/gemini";
 import AIChatBox from "./AIChatBox";
 import { createHandleLine, updateHandleLine } from "../three/handleLines";
+import { createNumberLabel } from "../three/numberLabel";
 
 
 import ControlPanel from "./ControlPanel";
@@ -33,6 +34,8 @@ export default function DynamicCubicBezier() {
   const [lineWidth, setLineWidth] = useState(0.02);
   const [animType, setAnimType] = useState("disappear-start-to-end");
   const [timeLine, setTimeLine] = useState(3);
+  const [selectedAnchorPos, setSelectedAnchorPos] = useState(null);
+
 
   // Three.js refs
   const sceneRef = useRef(null);
@@ -97,11 +100,18 @@ export default function DynamicCubicBezier() {
 
     // add anchors
     anchorPointsRef.current.forEach((p, i) => {
-      const mesh = makeSphere(p, 0x2196f3, 0.16);
-      mesh.userData = { type: "anchor", index: i };
-      scene.add(mesh);
-      anchorMeshesRef.current.push(mesh);
-    });
+  const mesh = makeSphere(p, 0x2196f3, 0.16);
+  mesh.userData = { type: "anchor", index: i };
+
+  // 🔢 Number label
+  const label = createNumberLabel(i.toString());
+  label.position.set(0, 0.45, 0); // above sphere
+  mesh.add(label);
+
+  sceneRef.current.add(mesh);
+  anchorMeshesRef.current.push(mesh);
+});
+
 
     // add/update control spheres for cp1/cp2
     controlPointsRef.current.forEach((seg, i) => {
@@ -187,6 +197,8 @@ controlPointsRef.current.forEach((seg, i) => {
       isDrawingRef,
       isFreehandRef,
       anchorPointsRef,
+      setSelectedAnchorPos,
+
       computeControlPoints: (update) =>
         computeControlPoints(anchorPointsRef, controlPointsRef, sceneRef, update),
       redrawAll,
@@ -412,6 +424,7 @@ controlPointsRef.current.forEach((seg, i) => {
     tubeMaterialRef.current = null;
 
     selectedRef.current = null;
+    setSelectedAnchorPos(null);
   };
 
  const deleteSelected = () => {
@@ -428,12 +441,15 @@ controlPointsRef.current.forEach((seg, i) => {
     if (!seg) return;
 
     seg[sel.which].manual = false;
+   
+
   }
 
   computeControlPoints(anchorPointsRef, controlPointsRef, sceneRef, true);
   redrawAll(lineWidth, lineColor);
 
   selectedRef.current = null;
+  setSelectedAnchorPos(null);
 };
 
 const handleAICreateCurve = async (prompt) => {
@@ -525,6 +541,8 @@ const handleAICreateCurve = async (prompt) => {
         isFreehand={isFreehand}
         setIsFreehand={setIsFreehand}
         onAICreateCurve={handleAICreateCurve}
+       selectedAnchorPos={selectedAnchorPos} 
+
         
       />
         <AIChatBox onSubmit={handleAICreateCurve} />

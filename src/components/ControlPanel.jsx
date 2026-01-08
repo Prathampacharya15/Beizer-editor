@@ -21,6 +21,8 @@ export default function ControlPanel({
   isFreehand,
   setIsFreehand,
   onAICreateCurve,
+  selectedAnchorPos
+
 }) {
   return (
     <>
@@ -236,20 +238,25 @@ export default function ControlPanel({
     🗑 Delete Selected
   </button>
 
-  <button
-  onClick={onAICreateCurve}
-  style={{
-    padding: "10px",
-    borderRadius: 10,
-    border: "none",
-    background: "linear-gradient(135deg,#6a11cb,#2575fc)",
-    color: "white",
-    fontWeight: 700,
-    cursor: "pointer",
-  }}
->
-   AI Create Curve
-</button>
+<div>
+  <label >Select the points to get the position</label>
+   {selectedAnchorPos && (
+  <div style={{
+    marginTop: 10,
+    padding: 8,
+    background: "#111",
+    borderRadius: 6,
+    fontSize: 12,
+  }}>
+    <div style={{ fontWeight: 600 }}>Selected Anchor</div>
+    <div>X: {selectedAnchorPos.x.toFixed(2)}</div>
+    <div>Y: {selectedAnchorPos.y.toFixed(2)}</div>
+    <div>Z: {selectedAnchorPos.z.toFixed(2)}</div>
+  </div>
+)}
+</div>
+ 
+
 
 
   <button

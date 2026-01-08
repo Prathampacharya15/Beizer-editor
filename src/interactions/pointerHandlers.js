@@ -19,6 +19,7 @@ export const attachPointerHandlers = ({
   activeWidthRef,
   activeColorRef,
   sceneRef,
+  setSelectedAnchorPos,
 }) => {
   // ------------------------------
   // GET WORLD POSITION UNDER CURSOR
@@ -103,6 +104,12 @@ export const attachPointerHandlers = ({
           index: ud.index,
         };
         selectedRef.current = { type: "anchor", index: ud.index };
+        const p = anchorPointsRef.current[ud.index];
+        setSelectedAnchorPos({
+          x: p.x,
+          y: p.y,
+          z: p.z,
+        });
         return;
       }
 
@@ -172,7 +179,12 @@ export const attachPointerHandlers = ({
     // ----------------------------------------
     if (d.type === "anchor") {
       anchorPointsRef.current[d.index].copy(p);
-
+      
+  setSelectedAnchorPos({
+    x: p.x,
+    y: p.y,
+    z: p.z,
+  });
       // Update LEFT seg cp2 if not manual
       if (d.index > 0) {
         const seg = controlPointsRef.current[d.index - 1];
