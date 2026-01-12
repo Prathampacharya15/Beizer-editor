@@ -30,6 +30,9 @@ export default function DynamicCubicBezier() {
   const [isFreehand, setIsFreehand] = useState(false);
   const isFreehandRef = useRef(false);
 
+
+  const [anchorInput, setAnchorInput] = useState(null);
+
   const [isDrawing, setIsDrawing] = useState(true);
   const [lineColor, setLineColor] = useState("#00ff00");
   const [lineWidth, setLineWidth] = useState(0.02);

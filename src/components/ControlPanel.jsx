@@ -269,7 +269,7 @@ export default function ControlPanel({
         <input
           type="number"
           step="0.1"
-          value={selectedAnchorPos[axis]}
+          value={Number(selectedAnchorPos[axis]).toFixed(4)}
           onChange={(e) =>
             onAnchorPositionChange(axis, parseFloat(e.target.value))
           }
